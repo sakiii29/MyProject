@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react';
+import axios from 'axios';
+import ItemList from './components/ItemList';
+import ItemForm from './components/ItemForm';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () =>{
+  const[currentItem, setCurrentItem] = useState(null);
+  const [refresh, setRefresh] = useState(false);
+
+  const handleEdit = (item) =>{
+    setCurrentItem(item);
+  };
+  const handleDelete = async (id) =>{
+    try{
+      await
+      axios.delete('http:///localhost:8000/api/items/${id}/');
+      setRefresh(!refresh);
+    } catch (error){
+      console.error('There was an error deleting the item!', error);
+    }
+  };
+
+const handleSucess=() => {
+  setCurrentItem(null);
+  setRefresh(!refresh);
+};
+return(
+  <div className='App'>
+    <ItemForm item={currentItem} onSuccess={handleSucess}/>
+    <ItemList key={refresh} onEdit={handleEdit} onDelete={handleDelete}/>
+  </div>
+);
+};
 
 export default App;
